@@ -1,0 +1,15 @@
+type PaginatorInfo {
+  count: Int!
+  currentPage: Int!
+  firstItem: Int
+  hasMorePages: Boolean!
+  lastItem: Int
+  lastPage: Int!
+  perPage: Int!
+  total: Int!
+}
+
+type PostPaginator {
+  data: [Post!]!
+  paginatorInfo: PaginatorInfo!
+}

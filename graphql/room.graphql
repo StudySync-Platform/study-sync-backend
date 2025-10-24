@@ -1,0 +1,86 @@
+# ========================
+# Types
+# ========================
+type Room {
+  id: ID!
+  name: String!
+  description: String
+  subject: String
+  level: String
+  host_user: User! @belongsTo(relation: "hostUser")
+  max_members: Int
+  visibility: Visibility
+  thumbnail_url: String
+  status: String
+  created_at: DateTime!
+  updated_at: DateTime!
+
+  studySessions: [StudySession!]! @hasMany
+}
+
+type StudySession {
+  id: ID!
+  room_id: ID!
+  host_user_id: ID!
+  subject: String!
+  start_time: DateTime!
+  end_time: DateTime
+  status: String!
+  visibility: Visibility!
+  room_link: String
+  recording_url: String
+  created_at: DateTime!
+  updated_at: DateTime!
+
+  member_count: Int! @method(name: "memberCount")
+  members: [User!]! @belongsToMany
+  memberCount: Int! @method(name: "memberCount")
+  isActive: Boolean! @method(name: "isActive")
+}
+
+enum Visibility @enum(class: "App\\Enums\\Visibility") {
+  PUBLIC @enum(value: "public")
+  PRIVATE @enum(value: "private")
+  ROOM_ONLY @enum(value: "room_only")
+  FRIENDS @enum(value: "friends")
+  CUSTOM @enum(value: "custom")
+}
+
+enum RoomStatus {
+  ACTIVE
+  ARCHIVED
+  FULL
+}
+
+# ========================
+# Queries
+# ========================
+extend type Query {
+  "Paginated list of all rooms"
+  rooms: [Room!]! @paginate(type: "PAGINATOR", model: "App\\Models\\Room") @guard
+
+  "Get a single room by ID"
+  room(id: ID!): Room @field(resolver: "App\\GraphQL\\Queries\\Room\\FindRoom") @guard
+}
+
+# ========================
+# Mutations
+# ========================
+extend type Mutation {
+  "Create a new room"
+  CreateRoom(input: CreateRoomInput!): Room! @field(resolver: "App\\GraphQL\\Mutations\\Room\\CreateRoom") @guard
+}
+
+# ========================
+# Input Types
+# ========================
+input CreateRoomInput {
+  name: String!
+  description: String!
+  subject: String!
+  level: String!
+  max_members: Int!
+  visibility: Visibility!
+  thumbnail_url: String
+  status: String!
+}

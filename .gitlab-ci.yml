@@ -1,0 +1,50 @@
+variables:
+  IMAGE_NAME: ayahosny/studysync-core
+  DOCKER_DRIVER: overlay2
+
+build_product_service:
+  stage: build
+  rules:
+    - changes:
+        - studysync-core/**/*
+  script:
+    - export IMAGE_TAG=$IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+    - docker build -f studysync-core/Dockerfile -t $IMAGE_TAG ./studysync-core
+    - docker tag $IMAGE_TAG $IMAGE_NAME:latest
+
+push_product_service:
+  stage: push
+  rules:
+    - changes:
+        - studysync-core/**/*
+  script:
+    - export IMAGE_TAG=$IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker push $IMAGE_TAG
+    - docker push $IMAGE_NAME:latest
+
+before_script:
+  - echo "$KUBECONFIG_FILE" | base64 -d > kubeconfig.yaml
+  - export KUBECONFIG=$PWD/kubeconfig.yaml
+
+deploy_product_service:
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      changes:
+        - studysync-core/**/*
+  script:
+    - export IMAGE_TAG="$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
+    - echo "Using image tag:" $IMAGE_TAG
+    - which minikube
+    - minikube status
+    - kubectl cluster-info
+    - echo "✅ Testing connection with kubectl"
+    - kubectl get pods
+    - |
+      if ! kubectl get deployment studysync-core; then
+        echo "⚠️ Deployment not found. Creating it..."
+        kubectl apply -f studysync-core/k8s
+      fi
+    - kubectl set image deployment/studysync-core studysync-core=$IMAGE_TAG
+    - kubectl rollout status deployment/studysync-core || kubectl rollout undo deployment/studysync-core

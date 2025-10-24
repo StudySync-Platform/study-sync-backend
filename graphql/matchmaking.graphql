@@ -1,0 +1,41 @@
+input PriorityWeightsInput {
+  timezone: Int
+  level: Int
+  communication: Int
+  study_mode: Int
+}
+
+input RetryMatchInput {
+  subject: String!
+  time_slot: DateTime!
+  level: String!
+  study_mode: String!
+  group_size: Int
+  communication: String
+  study_style: String
+  preferred_language: String
+  timezone: String
+  desired_time: String
+  time_flex_minutes: Int
+  excluded_user_ids: [Int!]
+  priority_weights: PriorityWeightsInput
+}
+
+
+type RetryMatchPayload {
+  matched: Boolean!
+  session_id: Int
+  message: String
+  matched_user: MatchedUser
+}
+
+type MatchedUser {
+  id: ID!
+  first_name: String!
+  last_name: String
+  avatar_url: String
+}
+
+extend type Mutation {
+  retryMatch(input: RetryMatchInput!): RetryMatchPayload @field(resolver: "App\\GraphQL\\Mutations\\Matching\\RetryMatchResolver")
+}

@@ -1,0 +1,49 @@
+apiVersion: v1          # Kubernetes API version for ConfigMap resource
+kind: ConfigMap         # The resource kind - ConfigMap stores configuration data as key-value pairs
+metadata:
+  name: product-nginx-config  # The name identifier for this ConfigMap object
+data:
+  nginx.conf: |          # The key "nginx.conf" holds the entire nginx configuration file content as a multi-line string
+    user  nginx;         # Specifies the user that the Nginx worker processes run as
+    worker_processes  auto;  # Number of worker processes; "auto" lets Nginx decide based on CPU cores
+
+    error_log  /var/log/nginx/error.log warn;  # Path and log level for error logs
+    pid        /var/run/nginx.pid;              # Path to store the process ID file
+
+    events {              # Events block to configure connection processing
+        worker_connections  1024;  # Maximum number of simultaneous connections per worker process
+    }
+
+    http {                # HTTP block contains settings for handling HTTP traffic
+        include       /etc/nginx/mime.types;     # Includes file mapping extensions to MIME types
+        default_type  application/octet-stream; # Default MIME type if not specified
+
+        sendfile        on;                      # Enables efficient file transfer using sendfile syscall
+        keepalive_timeout  65;                   # Timeout (in seconds) for keep-alive connections
+
+        server {              # Defines a server (virtual host) block
+            listen 80;        # Listens on port 80 for HTTP traffic
+            server_name localhost;  # Server name (hostname) for this server block
+
+            root /var/www/html/public;    # Root directory where static files are served from
+            index index.php index.html index.htm;  # Default index files to look for in directories
+
+            location / {                   # Location block for requests to "/"
+                try_files $uri $uri/ /index.php?$query_string;  
+                # Try to serve the URI as a file, then as a directory,
+                # if not found, internally rewrite to /index.php with original query string
+            }
+
+            location ~ \.php$ {            # Location block for PHP files (regex matching files ending in .php)
+                include /etc/nginx/fastcgi_params;  # Include standard FastCGI parameters
+                fastcgi_pass product-service:9000; # Forward PHP requests to FastCGI backend at product-service on port 9000
+                fastcgi_index index.php;            # Default index file for FastCGI processing
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                # Pass the script filename parameter with the full path to the PHP file
+            }
+
+            location ~ /\.ht {             # Location block for files starting with .ht (e.g., .htaccess)
+                deny all;                  # Deny all access to such files for security reasons
+            }
+        }
+    }

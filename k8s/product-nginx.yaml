@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-nginx
+  template:
+    metadata:
+      labels:
+        app: product-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            - name: product-code
+              mountPath: /var/www/html
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: product-nginx-config
+        - name: product-code
+          persistentVolumeClaim:
+            claimName: product-pvc

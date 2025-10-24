@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package study;
+
+service StudyService {
+  rpc GetStudySession (StudyRequest) returns (StudyResponse);
+}
+
+message StudyRequest {
+  string user_id = 1;
+}
+
+message StudyResponse {
+  string session_id = 1;
+  string subject = 2;
+  string scheduled_at = 3;
+}
