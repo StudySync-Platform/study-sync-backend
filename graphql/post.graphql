@@ -1,4 +1,6 @@
-# Post-related GraphQL types, inputs, and mutations.
+# -------------------------------
+# Enums
+# -------------------------------
 
 "Visibility enum mirrors App\\Enums\\Visibility"
 enum Visibility {
@@ -8,6 +10,15 @@ enum Visibility {
   friends
   custom
 }
+
+enum SortOrder {
+  ASC
+  DESC
+}
+
+# -------------------------------
+# Inputs
+# -------------------------------
 
 """
 Input for creating a Post.
@@ -22,7 +33,33 @@ input CreatePostInput {
   type: String!
 }
 
-"Post model. Matches App\\Models\\Post casts/fillables."
+input OrderByClause {
+  column: String!
+  order: SortOrder = ASC
+}
+
+# -------------------------------
+# Types
+# -------------------------------
+
+type PostComment {
+  id: ID!
+  post_id: ID!
+  author_id: ID!
+  content: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type PostReaction {
+  id: ID!
+  post_id: ID!
+  user_id: ID!
+  type: String! # e.g., "like", "love", etc.
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
 type Post {
   id: ID!
   author_id: ID!
@@ -40,6 +77,10 @@ type Post {
   reactions: [PostReaction!]! @hasMany
 }
 
+# -------------------------------
+# Queries
+# -------------------------------
+
 extend type Query {
   posts(
     first: Int
@@ -52,10 +93,11 @@ extend type Query {
     @paginate(type: "PAGINATOR", model: "App\\Models\\Post")
 }
 
+# -------------------------------
+# Mutations
+# -------------------------------
 
-# If you don't already have these:
-input OrderByClause {
-  column: String!
-  order: SortOrder = ASC
+type Mutation {
+  createPost(input: CreatePostInput!): Post!
+    @field(resolver: "App\\GraphQL\\Mutations\\Post\\CreatePost")
 }
-enum SortOrder { ASC DESC }

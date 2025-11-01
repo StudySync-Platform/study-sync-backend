@@ -4,9 +4,9 @@
 type Session {
   id: ID!
   user: User! @belongsTo
-  emoji: String!
+  emoji: String
   subject: String!
-  time: DateTime!
+  time: DateTime
   status: String!
   created_at: DateTime!
   updated_at: DateTime!
@@ -25,7 +25,7 @@ extend type Query {
   sessions: [Session!]! @paginate(type: "PAGINATOR", model: "App\\Models\\Session")
 
   "Get a single session by ID"
-  session(id: ID!): Session @find(model: "App\\Models\\Session")
+  session(id: ID!): Session @field(resolver: "App\\GraphQL\\Queries\\Session\\FindSession") @guard
 
   "Upcoming sessions (time > now)"
   upcomingSessions: [Session!]!

@@ -1,0 +1,15 @@
+# -------------------------------
+# Queries
+# -------------------------------
+
+extend type Query {
+  posts(
+    first: Int
+    page: Int
+    author_id: ID @where(key: "author_id")
+    room_id: ID @where(key: "room_id")
+    visibility: Visibility @where(key: "visibility")
+    orderBy: [OrderByClause!] @orderBy
+  ): [Post!]!
+    @paginate(type: "PAGINATOR", model: "App\\Models\\Post")
+}

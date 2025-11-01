@@ -1,0 +1,38 @@
+# -------------------------------
+# Types
+# -------------------------------
+
+type PostComment {
+  id: ID!
+  post_id: ID!
+  author_id: ID!
+  content: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type PostReaction {
+  id: ID!
+  post_id: ID!
+  user_id: ID!
+  type: String! # e.g., "like", "love", etc.
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type Post {
+  id: ID!
+  author_id: ID!
+  room_id: ID
+  content: String!
+  media_urls: [String!]
+  visibility: Visibility!
+  type: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+
+  author: User @belongsTo
+  room: Room @belongsTo
+  comments: [PostComment!]! @hasMany
+  reactions: [PostReaction!]! @hasMany
+}

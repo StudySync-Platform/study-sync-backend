@@ -1,0 +1,18 @@
+# -------------------------------
+# Enums
+# -------------------------------
+
+"Visibility enum mirrors App\\Enums\\Visibility"
+enum Visibility {
+  public
+  private
+  room_only
+  friends
+  custom
+}
+
+"Directions for ordering a list of records."
+enum SortOrder {
+  ASC
+  DESC
+}

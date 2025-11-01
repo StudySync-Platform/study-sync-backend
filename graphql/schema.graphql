@@ -2,6 +2,12 @@
 #import auth.graphql
 #import user.graphql
 #import room.graphql
-#import post.graphql
+
+#import post/post.enums.graphql
+#import post/post.inputs.graphql
+#import post/post.types.graphql
+#import post/post.queries.graphql
+#import post/post.mutations.graphql
+
 #import session.graphql
 #import matchmaking.graphql
