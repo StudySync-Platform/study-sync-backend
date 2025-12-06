@@ -5,4 +5,14 @@
 extend type Mutation {
   createPost(input: CreatePostInput!): Post!
     @field(resolver: "App\\GraphQL\\Mutations\\Post\\CreatePost")
+  
+  updatePost(id: ID!, input: UpdatePostInput!): Post!
+    @guard
+    @can(ability: "update", find: "id")
+    @field(resolver: "App\\GraphQL\\Mutations\\Post\\UpdatePost")
+  
+  deletePost(id: ID!): Post!
+    @guard
+    @can(ability: "delete", find: "id")
+    @field(resolver: "App\\GraphQL\\Mutations\\Post\\DeletePost")
 }

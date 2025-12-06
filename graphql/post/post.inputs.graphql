@@ -17,6 +17,16 @@ input CreatePostInput {
     type: String!
 }
 
+"""
+Input for updating a Post.
+All fields are optional - only provided fields will be updated.
+"""
+input UpdatePostInput {
+    content: String
+    media_urls: [String!]
+    visibility: Visibility
+}
+
 "Allows ordering a list of records."
 input OrderByClause {
   column: String!

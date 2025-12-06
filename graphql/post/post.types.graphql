@@ -34,5 +34,8 @@ type Post {
   author: User @belongsTo
   room: Room @belongsTo
   comments: [PostComment!]! @hasMany
+  comments_count: Int! @count(relation: "comments")
   reactions: [PostReaction!]! @hasMany
+  reactions_count: Int! @count(relation: "reactions")
 }
+
