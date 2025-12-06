@@ -1,0 +1,30 @@
+# Habit types
+
+type Habit {
+  id: ID!
+  user_id: ID!
+  name: String!
+  description: String
+  target: Int
+  unit: String
+  visibility: Visibility!
+  created_at: DateTime!
+  updated_at: DateTime!
+
+  user: User @belongsTo
+  progresses: [HabitProgress!]! @hasMany
+}
+
+type HabitProgress {
+  id: ID!
+  habit_id: ID!
+  user_id: ID!
+  progress_date: Date!
+  value: Int!
+  note: String
+  created_at: DateTime!
+  updated_at: DateTime!
+
+  habit: Habit @belongsTo
+  user: User @belongsTo
+}

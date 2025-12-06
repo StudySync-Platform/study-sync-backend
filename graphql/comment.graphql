@@ -8,6 +8,15 @@ input CreatePostCommentInput {
     media_urls: [String!]
 }
 
+"""
+Input for updating a comment.
+Only provided fields will be updated.
+"""
+input UpdatePostCommentInput {
+    content: String
+    media_urls: [String!]
+}
+
 type PostComment {
     id: ID!
     commenter_id: ID!
@@ -27,6 +36,7 @@ type PostComment {
 type Query {
     comments(
         post_id: ID @where(key: "post_id")
+        onlyTopLevel: Boolean @whereNull(key: "parent_id")
         orderBy: [OrderByClause!] @orderBy
     ): [PostComment!]! @paginate(type: "PAGINATOR", defaultCount: 10)
 }
@@ -39,4 +49,17 @@ extend type Mutation {
     @guard
     @validator(class: "App\\GraphQL\\Validators\\Post\\CreatePostCommentValidator")
     @field(resolver: "App\\GraphQL\\Mutations\\Post\\CreatePostComment")
+    
+    updatePostComment(
+        id: ID!
+        input: UpdatePostCommentInput!
+    ): PostComment!
+    @guard
+    @can(ability: "update", find: "id")
+    @field(resolver: "App\\GraphQL\\Mutations\\Post\\UpdatePostComment")
+    
+    deletePostComment(id: ID!): PostComment!
+    @guard
+    @can(ability: "delete", find: "id")
+    @field(resolver: "App\\GraphQL\\Mutations\\Post\\DeletePostComment")
 }

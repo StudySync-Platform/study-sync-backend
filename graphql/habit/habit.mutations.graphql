@@ -1,0 +1,17 @@
+# Habit mutations
+
+extend type Mutation {
+  createHabit(input: CreateHabitInput!): Habit!
+    @field(resolver: "App\\GraphQL\\Mutations\\Habit\\CreateHabit")
+
+  updateHabit(id: ID!, input: UpdateHabitInput!): Habit!
+    @guard
+    @can(ability: "update", find: "id")
+    @field(resolver: "App\\GraphQL\\Mutations\\Habit\\UpdateHabit")
+
+  updateHabitProgress(input: UpdateHabitProgressInput!): HabitProgress!
+    @field(resolver: "App\\GraphQL\\Mutations\\Habit\\UpdateHabitProgress")
+
+  publishHabitAsPost(input: PublishHabitAsPostInput!): Post!
+    @field(resolver: "App\\GraphQL\\Mutations\\Habit\\PublishHabitAsPost")
+}

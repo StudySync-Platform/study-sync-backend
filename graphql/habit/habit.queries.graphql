@@ -1,0 +1,9 @@
+# Habit queries
+
+extend type Query {
+  habits: [Habit!]!
+    @field(resolver: "App\\GraphQL\\Queries\\Habit\\GetUserHabits")
+
+  habit(id: ID!): Habit
+    @field(resolver: "App\\GraphQL\\Queries\\Habit\\GetHabit")
+}

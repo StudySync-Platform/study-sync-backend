@@ -9,6 +9,11 @@
 #import post/post.queries.graphql
 #import post/post.mutations.graphql
 
+#import habit/habit.types.graphql
+#import habit/habit.inputs.graphql
+#import habit/habit.queries.graphql
+#import habit/habit.mutations.graphql
+
 #import comment.graphql
 #import session.graphql
 #import matchmaking.graphql

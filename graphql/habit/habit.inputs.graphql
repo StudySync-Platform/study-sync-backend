@@ -1,0 +1,31 @@
+# Habit inputs
+
+input CreateHabitInput {
+  name: String!
+  description: String
+  target: Int
+  unit: String
+  visibility: Visibility = public
+}
+
+input UpdateHabitInput {
+  name: String
+  description: String
+  target: Int
+  unit: String
+  visibility: Visibility
+}
+
+input UpdateHabitProgressInput {
+  habit_id: ID!
+  progress_date: Date!
+  value: Int!
+  note: String
+}
+
+input PublishHabitAsPostInput {
+  habit_id: ID!
+  progress_id: ID
+  visibility: Visibility = public
+  type: String = "habit"
+}
